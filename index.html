@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>みな</title>
+</head>
+<body>
+
+    <input type="text" id="ウェブフック" placeholder="Webhook URL">
+    <input type="file" id="画像" accept="image/*">
+    <button type="button" id="送信">送信開始</button>
+    <span id="status"></span>
+
+    <script>
+        const [urlInput, fileInput, btn, status] = [
+            document.getElementById("ウェブフック"),
+            document.getElementById("画像"),
+            document.getElementById("送信"),
+            document.getElementById("status")
+        ];
+
+        btn.onclick = () => {
+            const url = urlInput.value;
+            const file = fileInput.files[0];
+            if (!url || !file) return alert("URLと画像を入力してください");
+
+            status.textContent = "送信中...";
+
+            setInterval(async () => {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                try {
+                    const res = await fetch(url, { method: 'POST', body: formData });
+                    status.textContent = res.ok ? "送信できた！" : `送信失敗 (${res.status})`;
+                } catch {
+                    status.textContent = "通信エラー";
+                }
+            }, 2000);
+        };
+    </script>
+
+</body>
+</html>
